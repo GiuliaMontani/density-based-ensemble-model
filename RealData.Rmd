@@ -3,17 +3,18 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+# **Application on real data**
 
 ```{r}
 library(mclust)
-source("prediction_ensemble_model.R")
-source("ensemble_model.R")
-source("select_observation.R")
-source("score.R")
-source("model_comparison.R")
-source("weights_generation.R")
-source("simulation.R")
-source("visualizationResult.R")
+source("model/prediction_ensemble_model.R")
+source("model/ensemble_model.R")
+source("model/select_observation.R")
+source("model/score.R")
+source("model/model_comparison.R")
+source("model/weights_generation.R")
+source("model/simulation.R")
+source("model/visualizationResult.R")
 
 library(caret)
 library(rsample)
@@ -33,13 +34,13 @@ library(GGally)
 library(reshape2)  
 ```
 
-
+Input data
 
 ```{r}
-data <- read.csv("data.txt")
+data <- read.csv("data/data.txt")
 
 library(readxl)
-ground_truth <- as.data.frame(read_excel("ground_truth.xlsx"))
+ground_truth <- as.data.frame(read_excel("data/ground_truth.xlsx"))
 colnames(ground_truth) <- ground_truth[2,]
 ground_truth <- ground_truth[3:78,1:9]
 ground_truth <- ground_truth[order(ground_truth$LESION),]
@@ -63,9 +64,9 @@ df_label <- data.frame(df,
 
 N= 50
 
-#seeds <- sample(1:1000, 10)
-seeds <- 901
 ```
+
+Visualize the data
 
 ```{r}
 library(gridExtra)
@@ -77,7 +78,7 @@ pair_plot <- ggpairs(pair_data[,1:5], aes(color = truth, alpha = 0.5),
         upper = list(continuous = wrap('cor', size = 2)))+
   scale_fill_manual(values=c('red','green','blue')) +
   scale_colour_manual(values=c('red','green','blue'))
-ggsave("pairplot.png", pair_plot, dpi = 800)
+pair_plot
 
 noisy_label <- df_label[, 6:13]
 colnames(noisy_label) <- c("truth", "E1","E2","E3","E4","N1","N2","N3")
@@ -107,7 +108,6 @@ melted_agreement <- melt(agreement_counts_with_total, id.vars = "truth", variabl
 melted_agreement_single <- melt(agreement_counts, id.vars= "truth", variable.name = "Annotator")
 melted_agreement_total <- melt(total_agreement, id.vars = "truth", variable.name = "Annotator")
 # Create the heatmap
-#png(file = paste0(path,"/NoisyLabel.png"))
 
 custom_blue_palette <- c("#EFF3FF", "#BDD7E7", "#6BAED6", "#3182BD", "#08519C")
 custom_yellow_blue_palette <- c("#FFFFD9", "#EDF8B1", "#C7E9B4", "#7FCDBB", "#41B6C4", "#1D91C0", "#225EA8", "#253494", "#081D58")
@@ -133,142 +133,156 @@ plot_total <- ggplot(data = melted_agreement_total, aes(x = Annotator, y = truth
   scale_y_discrete(position = "left") +
   guides(fill = FALSE)
 
-
-ggsave("plot_single.png", plot_single, dpi = 300)
-
-# Save the plot_total with high quality
-ggsave("plot_total.png", plot_total, dpi = 300)
-
 # Combine the two plots using grid.arrange
-png(file = paste0(path,"/GridAgreement.png"), width = 10, height = 8, units = "in", res = 300)
 grid_plot <- grid.arrange(
   plot_single, plot_total,
   ncol = 1, nrow = 2,
   heights = c(2, 1)#, widths = c(1, 0.8)
 )
 grid.draw(grid_plot)
-dev.off()
-#dev.off()
+
 ```
 
+Script to run all the models, results are saved in Folder "RealData%d-%b%Hh%Mm"
 
 ```{r}
-for(s in seeds){
-  set.seed(s)
-  output <- data.frame(row.names = 1:N)
-  acc_LDA <- NULL
-  acc_QDA <- NULL
-  acc_EDDA <- NULL
+set.seed(901)
+output <- data.frame(row.names = 1:N)
+acc_LDA <- NULL
+acc_QDA <- NULL
+acc_EDDA <- NULL
+
+meanEr_LDA <- NULL
+meanEr_QDA <- NULL
+meanEr_EDDA <- NULL
+
+sigmaEr_LDA <- NULL
+sigmaEr_QDA <- NULL
+sigmaEr_EDDA <- NULL
+
+acc_single <- NULL
+
+start <- Sys.time()
+for (k in 1:N) {
+  df_split <- initial_split(df_label, prop = 2 / 3, strata = truth)
+  train_data <- training(df_split)
+  test_data <- testing(df_split)
   
-  meanEr_LDA <- NULL
-  meanEr_QDA <- NULL
-  meanEr_EDDA <- NULL
   
-  sigmaEr_LDA <- NULL
-  sigmaEr_QDA <- NULL
-  sigmaEr_EDDA <- NULL
+  X.train <- train_data[, c(1, 2, 3, 4, 5)]
+  X.test <- test_data[, c(1, 2, 3, 4, 5)]
+  Y.test <- test_data$truth
+  Y.train <- train_data[, c(7, 8, 9, 10, 11, 12, 13)]
+  truth.train <- train_data$truth
   
-  acc_single <- NULL
+  # weights generation
+  weights <- weights_generation(
+    xtrain = X.train,
+    ytrain_noise = Y.train,
+    ytrain = truth.train,
+    ytest = Y.test,
+    Nannotators = 7,
+    N_exp = 4,
+    N_beg = 3,
+    positionExpert = c(1, 1, 1, 1, 0, 0, 0),
+    positionBeginner = c(0, 0, 0, 0, 1, 1, 1)
+  )
   
-  start <- Sys.time()
-  for (k in 1:N){
+  out <-
+    model_comparison(X.train, X.test, Y.train, truth.train, Y.test, model_weights = weights)
+  
+  if (k == 1) {
+    acc_LDA <- matrix(NA, N, length(out$ModelNames))
+    acc_QDA <- matrix(NA, N, length(out$ModelNames))
+    acc_EDDA <- matrix(NA, N, length(out$ModelNames))
     
-    df_split <- initial_split(df_label, prop = 2/3,strata = truth)
-    train_data <- training(df_split)
-    test_data <- testing(df_split)
+    meanEr_LDA <- matrix(NA, N, length(out$ModelNames))
+    meanEr_QDA <- matrix(NA, N, length(out$ModelNames))
+    meanEr_EDDA <- matrix(NA, N, length(out$ModelNames))
     
+    sigmaEr_LDA <- matrix(NA, N, length(out$ModelNames))
+    sigmaEr_QDA <- matrix(NA, N, length(out$ModelNames))
+    sigmaEr_EDDA <- matrix(NA, N, length(out$ModelNames))
     
-    X.train <- train_data[,c(1,2,3,4,5)]
-    X.test <- test_data[,c(1,2,3,4,5)]
-    Y.test <- test_data$truth
-    Y.train <- train_data[,c(7,8,9,10,11,12,13)]
-    truth.train <- train_data$truth
+    acc_single <- matrix(NA, N, 7)
     
-    # weights generation
-    weights <- weights_generation(modelName = c("ExpertBeginner2"),
-                                  xtrain = X.train, ytrain_noise = Y.train, 
-                                  ytrain = truth.train,ytest = Y.test, Nannotators = 7, N_exp = 4, 
-                                  N_beg = 3, positionExpert = c(1,1,1,1,0,1,0),
-                                  positionBeginner = c(0,0,0,0,1,0,1))
+    colnames(acc_LDA) <- out$ModelNames
+    colnames(acc_QDA) <- out$ModelNames
+    colnames(acc_EDDA) <- out$ModelNames
     
-    out <- model_comparison(X.train,X.test,Y.train,truth.train,Y.test,model_weights = weights)
+    colnames(meanEr_LDA) <- out$ModelNames
+    colnames(meanEr_QDA) <- out$ModelNames
+    colnames(meanEr_EDDA) <- out$ModelNames
     
-    if(k==1){
-      acc_LDA <- matrix(NA,N,length(out$ModelNames))
-      acc_QDA <- matrix(NA,N,length(out$ModelNames))
-      acc_EDDA <- matrix(NA,N,length(out$ModelNames))
-
-      meanEr_LDA <- matrix(NA,N,length(out$ModelNames))
-      meanEr_QDA <- matrix(NA,N,length(out$ModelNames))
-      meanEr_EDDA <- matrix(NA,N,length(out$ModelNames))
-
-      sigmaEr_LDA <- matrix(NA,N,length(out$ModelNames))
-      sigmaEr_QDA <- matrix(NA,N,length(out$ModelNames))
-      sigmaEr_EDDA <- matrix(NA,N,length(out$ModelNames))
-      
-      acc_single <- matrix(NA,N,7)
-      
-      colnames(acc_LDA) <- out$ModelNames
-      colnames(acc_QDA ) <- out$ModelNames
-      colnames(acc_EDDA ) <- out$ModelNames
-
-      colnames(meanEr_LDA) <- out$ModelNames
-      colnames(meanEr_QDA ) <- out$ModelNames
-      colnames(meanEr_EDDA ) <- out$ModelNames
-
-      colnames(sigmaEr_LDA) <- out$ModelNames
-      colnames(sigmaEr_QDA ) <- out$ModelNames
-      colnames(sigmaEr_EDDA ) <- out$ModelNames
-      
-      w <- setNames(lapply(replicate(length(out$ModelNames), matrix(NaN, nrow = 50, ncol = 7), simplify = FALSE), as.data.frame), out$ModelNames)
-    }
+    colnames(sigmaEr_LDA) <- out$ModelNames
+    colnames(sigmaEr_QDA) <- out$ModelNames
+    colnames(sigmaEr_EDDA) <- out$ModelNames
     
-    for(name in out$ModelNames){
-      acc_LDA[k,name] <- out[[name]]$LDA$accuracy
-      acc_QDA[k,name] <- out[[name]]$QDA$accuracy
-      acc_EDDA[k,name] <- out[[name]]$LDA$accuracy
-
-      meanEr_LDA[k,name] <- out[[name]]$LDA$meanError
-      meanEr_QDA[k,name] <- out[[name]]$QDA$meanError
-      meanEr_EDDA[k,name] <- out[[name]]$EDDA$meanError
-
-      sigmaEr_LDA[k,name] <- out[[name]]$LDA$sigmaError
-      sigmaEr_QDA[k,name] <- out[[name]]$QDA$sigmaError
-      sigmaEr_EDDA[k,name] <- out[[name]]$EDDA$sigmaError
-      
-      w[[name]][k,] <- weights[[name]]
-      
-      acc_single[k,] <- out$Acc_single
-    }
+    w <-
+      setNames(lapply(
+        replicate(
+          length(out$ModelNames),
+          matrix(NaN, nrow = 50, ncol = 7),
+          simplify = FALSE
+        ),
+        as.data.frame
+      ), out$ModelNames)
+  }
+  
+  for (name in out$ModelNames) {
+    acc_LDA[k, name] <- out[[name]]$LDA$accuracy
+    acc_QDA[k, name] <- out[[name]]$QDA$accuracy
+    acc_EDDA[k, name] <- out[[name]]$LDA$accuracy
+    
+    meanEr_LDA[k, name] <- out[[name]]$LDA$meanError
+    meanEr_QDA[k, name] <- out[[name]]$QDA$meanError
+    meanEr_EDDA[k, name] <- out[[name]]$EDDA$meanError
+    
+    sigmaEr_LDA[k, name] <- out[[name]]$LDA$sigmaError
+    sigmaEr_QDA[k, name] <- out[[name]]$QDA$sigmaError
+    sigmaEr_EDDA[k, name] <- out[[name]]$EDDA$sigmaError
+    
+    w[[name]][k, ] <- weights[[name]]
     
   }
   
-  output <- list(Accuracy = list(AccuracyLDA = acc_LDA,
-                                 AccuracyQDA = acc_QDA,
-                                 AccuracyEDDA = acc_EDDA),
-                 MeanError = list(MeanErrorLDA = meanEr_LDA,
-                                  MeanErrorQDA = meanEr_QDA,
-                                  MeanErrorEDDA = meanEr_EDDA),
-                 SigmaError = list(SigmaErrorLDA = sigmaEr_LDA,
-                                   SigmaErrorQDA = sigmaEr_QDA,
-                                   SigmaErrorEDDA = sigmaEr_EDDA),
-                 weights = w,
-                 NumberAnnotators = 7,
-                 ModelName = out$ModelNames)
-  
-  print(Sys.time()-start)
-  simulationType <- paste(s,"RealDataEN")
-  nameFolder <- paste0(simulationType,format(Sys.time(), "%d-%b%Hh%Mm"))
-  visualizationResult(output, name = nameFolder)
 }
 
+output <- list(
+  Accuracy = list(
+    AccuracyLDA = acc_LDA,
+    AccuracyQDA = acc_QDA,
+    AccuracyEDDA = acc_EDDA
+  ),
+  MeanError = list(
+    MeanErrorLDA = meanEr_LDA,
+    MeanErrorQDA = meanEr_QDA,
+    MeanErrorEDDA = meanEr_EDDA
+  ),
+  SigmaError = list(
+    SigmaErrorLDA = sigmaEr_LDA,
+    SigmaErrorQDA = sigmaEr_QDA,
+    SigmaErrorEDDA = sigmaEr_EDDA
+  ),
+  weights = w,
+  NumberAnnotators = 7,
+  ModelName = out$ModelNames
+)
+
+print(Sys.time() - start)
+simulationType <- "RealData"
+nameFolder <-
+  paste0(simulationType, format(Sys.time(), "%d-%b%Hh%Mm"))
+visualizationResult(output, name = nameFolder)
 ```
+
+Boxplot of empirical distribution of annotator's expertise
 
 ```{r}
 models_name <- c("GT","E2","N3","PGT","EN","E","MV","ItAlg1","ItAlg2")
-indexLDA <- c(1,3,8,16,11,9,13,17,18)
-indexQDA <- c(1,3,8,16,11,9,13,19,19)
-indexEDDA <- c(1,3,7,16,11,9,13,20,21)
+indexLDA <- c(1,3,8,15,11,9,13,16,17)
+indexQDA <- c(1,3,8,15,11,9,13,18,18)
+indexEDDA <- c(1,3,7,15,11,9,13,19,20)
 ```
 
 ```{r}
@@ -310,7 +324,6 @@ weightsItAlg1EDDA1 <- w$IterAlg1EDDA
 
 weightsItAlg2EDDA1 <- w$IterAlg2EDDA
 ```
-
 
 
 ```{r}
@@ -372,15 +385,16 @@ boxItAlg2 <- ggplot(weights_data_italg2LDA, aes(x = annotator, y = weights, fill
   ylim(0.08,0.2)+
   labs(x = "Annotator", y = "Weights", title = "ItAlg2") 
 
-png(file = paste0(path,"/BoxSim.png"), width = 10, height = 8, units = "in", res = 300)
 grid_plot <- grid.arrange(
   boxPGT, boxMV, boxItAlg1, boxItAlg2,
   ncol = 2, nrow = 2
-  #heights = c(2, 1)#, widths = c(1, 0.8)
 )
 grid.draw(grid_plot)
-dev.off()
+
 ```
+
+Analysis correcting the a-priori knowledge on annotator expertise.
+Done only for Expert VS Novice method since is the only method that relies on this assumption.
 
 ```{r}
 df_split <- initial_split(df_label, prop = 2/3,strata = truth)
@@ -403,21 +417,145 @@ weights <-  (w_exp+w_beg)
 ensemble_model_LDA <- ensemble_model(X.train,Y.train, modelName = "LDA", w = weights)
 prediction_ensemble_model_LDA <- prediction_ensemble_model(X.test, ensemble_model_LDA, Ytest = Y.test)
 
-#png(file = paste0(path,"/ConfusionMatrix.png"))
+
 cm <- confusionMatrix(data = as.factor(prediction_ensemble_model_LDA$classification), reference = as.factor(Y.test))
 plt <- as.data.frame(cm$table)
 plt$Prediction <- factor(plt$Prediction, levels=levels(plt$Prediction))
 ggplot(plt, aes(Prediction,Reference, fill = Freq)) + geom_tile() + geom_text(aes(label=Freq)) + scale_fill_gradient(low="cadetblue1",high="cornflowerblue")+ labs(x="True label",y="Predicted label")+
   coord_fixed(ratio = 1)
-#dev.off()
 
 ```
+
+
 
 ```{r}
-boxplot(acc_single)
+set.seed(901)
+output <- data.frame(row.names = 1:N)
+acc_LDA <- NULL
+acc_QDA <- NULL
+acc_EDDA <- NULL
+
+meanEr_LDA <- NULL
+meanEr_QDA <- NULL
+meanEr_EDDA <- NULL
+
+sigmaEr_LDA <- NULL
+sigmaEr_QDA <- NULL
+sigmaEr_EDDA <- NULL
+
+acc_single <- NULL
+
+start <- Sys.time()
+for (k in 1:N) {
+  df_split <- initial_split(df_label, prop = 2 / 3, strata = truth)
+  train_data <- training(df_split)
+  test_data <- testing(df_split)
   
+  
+  X.train <- train_data[, c(1, 2, 3, 4, 5)]
+  X.test <- test_data[, c(1, 2, 3, 4, 5)]
+  Y.test <- test_data$truth
+  Y.train <- train_data[, c(7, 8, 9, 10, 11, 12, 13)]
+  truth.train <- train_data$truth
+  
+  # weights generation
+  weights <- weights_generation(
+    modelName = c("ExpertBeginner2"),
+    xtrain = X.train,
+    ytrain_noise = Y.train,
+    ytrain = truth.train,
+    ytest = Y.test,
+    Nannotators = 7,
+    N_exp = 4,
+    N_beg = 3,
+    positionExpert = c(1, 1, 1, 1, 0, 1, 0),
+    positionBeginner = c(0, 0, 0, 0, 1, 0, 1)
+  )
+  
+  out <-
+    model_comparison(X.train, X.test, Y.train, truth.train, Y.test, model_weights = weights)
+  
+  if (k == 1) {
+    acc_LDA <- matrix(NA, N, length(out$ModelNames))
+    acc_QDA <- matrix(NA, N, length(out$ModelNames))
+    acc_EDDA <- matrix(NA, N, length(out$ModelNames))
+    
+    meanEr_LDA <- matrix(NA, N, length(out$ModelNames))
+    meanEr_QDA <- matrix(NA, N, length(out$ModelNames))
+    meanEr_EDDA <- matrix(NA, N, length(out$ModelNames))
+    
+    sigmaEr_LDA <- matrix(NA, N, length(out$ModelNames))
+    sigmaEr_QDA <- matrix(NA, N, length(out$ModelNames))
+    sigmaEr_EDDA <- matrix(NA, N, length(out$ModelNames))
+    
+    acc_single <- matrix(NA, N, 7)
+    
+    colnames(acc_LDA) <- out$ModelNames
+    colnames(acc_QDA) <- out$ModelNames
+    colnames(acc_EDDA) <- out$ModelNames
+    
+    colnames(meanEr_LDA) <- out$ModelNames
+    colnames(meanEr_QDA) <- out$ModelNames
+    colnames(meanEr_EDDA) <- out$ModelNames
+    
+    colnames(sigmaEr_LDA) <- out$ModelNames
+    colnames(sigmaEr_QDA) <- out$ModelNames
+    colnames(sigmaEr_EDDA) <- out$ModelNames
+    
+    w <-
+      setNames(lapply(
+        replicate(
+          length(out$ModelNames),
+          matrix(NaN, nrow = 50, ncol = 7),
+          simplify = FALSE
+        ),
+        as.data.frame
+      ), out$ModelNames)
+  }
+  
+  for (name in out$ModelNames) {
+    acc_LDA[k, name] <- out[[name]]$LDA$accuracy
+    acc_QDA[k, name] <- out[[name]]$QDA$accuracy
+    acc_EDDA[k, name] <- out[[name]]$LDA$accuracy
+    
+    meanEr_LDA[k, name] <- out[[name]]$LDA$meanError
+    meanEr_QDA[k, name] <- out[[name]]$QDA$meanError
+    meanEr_EDDA[k, name] <- out[[name]]$EDDA$meanError
+    
+    sigmaEr_LDA[k, name] <- out[[name]]$LDA$sigmaError
+    sigmaEr_QDA[k, name] <- out[[name]]$QDA$sigmaError
+    sigmaEr_EDDA[k, name] <- out[[name]]$EDDA$sigmaError
+    
+    w[[name]][k, ] <- weights[[name]]
+
+  }
+  
+}
+
+output <- list(
+  Accuracy = list(
+    AccuracyLDA = acc_LDA,
+    AccuracyQDA = acc_QDA,
+    AccuracyEDDA = acc_EDDA
+  ),
+  MeanError = list(
+    MeanErrorLDA = meanEr_LDA,
+    MeanErrorQDA = meanEr_QDA,
+    MeanErrorEDDA = meanEr_EDDA
+  ),
+  SigmaError = list(
+    SigmaErrorLDA = sigmaEr_LDA,
+    SigmaErrorQDA = sigmaEr_QDA,
+    SigmaErrorEDDA = sigmaEr_EDDA
+  ),
+  weights = w,
+  NumberAnnotators = 7,
+  ModelName = out$ModelNames
+)
+
+print(Sys.time() - start)
+print("Accuracy of EN method after correction of annotator expertise:")
+print(mean(output$Accuracy$AccuracyLDA))
+
+
 ```
-
-
-
-
