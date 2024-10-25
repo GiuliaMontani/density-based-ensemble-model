@@ -64,6 +64,21 @@ df_label <- data.frame(df,
 
 N= 50
 
+# data <- lapply(df_label, function(col) {
+#   if(is.character(col)) {
+#     factor(col)
+#   } else {
+#     col
+#   }
+# })
+# data <- lapply(data, function(col) {
+#   if(is.factor(col)) {
+#     as.numeric(col)
+#   } else {
+#     col
+#   }
+# })
+# data <- as.data.frame(data)
 ```
 
 Visualize the data
@@ -73,8 +88,8 @@ library(gridExtra)
 
 path <- getwd()
 pair_data <- df_label[,1:6]
-colnames(pair_data) <- c("V113", "V173", "V475", "V489","V603")
-pair_plot <- ggpairs(pair_data[,1:5], aes(color = truth, alpha = 0.5), 
+colnames(pair_data) <- c("V113", "V173", "V475", "V489","V603","truth")
+pair_plot <- ggpairs(pair_data[,1:6], aes(color = truth, alpha = 0.5),
         upper = list(continuous = wrap('cor', size = 2)))+
   scale_fill_manual(values=c('red','green','blue')) +
   scale_colour_manual(values=c('red','green','blue'))
@@ -187,37 +202,37 @@ for (k in 1:N) {
     positionExpert = c(1, 1, 1, 1, 0, 0, 0),
     positionBeginner = c(0, 0, 0, 0, 1, 1, 1)
   )
-  
+
   out <-
     model_comparison(X.train, X.test, Y.train, truth.train, Y.test, model_weights = weights)
-  
+
   if (k == 1) {
     acc_LDA <- matrix(NA, N, length(out$ModelNames))
     acc_QDA <- matrix(NA, N, length(out$ModelNames))
     acc_EDDA <- matrix(NA, N, length(out$ModelNames))
-    
+
     meanEr_LDA <- matrix(NA, N, length(out$ModelNames))
     meanEr_QDA <- matrix(NA, N, length(out$ModelNames))
     meanEr_EDDA <- matrix(NA, N, length(out$ModelNames))
-    
+
     sigmaEr_LDA <- matrix(NA, N, length(out$ModelNames))
     sigmaEr_QDA <- matrix(NA, N, length(out$ModelNames))
     sigmaEr_EDDA <- matrix(NA, N, length(out$ModelNames))
-    
+
     acc_single <- matrix(NA, N, 7)
-    
+
     colnames(acc_LDA) <- out$ModelNames
     colnames(acc_QDA) <- out$ModelNames
     colnames(acc_EDDA) <- out$ModelNames
-    
+
     colnames(meanEr_LDA) <- out$ModelNames
     colnames(meanEr_QDA) <- out$ModelNames
     colnames(meanEr_EDDA) <- out$ModelNames
-    
+
     colnames(sigmaEr_LDA) <- out$ModelNames
     colnames(sigmaEr_QDA) <- out$ModelNames
     colnames(sigmaEr_EDDA) <- out$ModelNames
-    
+
     w <-
       setNames(lapply(
         replicate(
@@ -228,22 +243,22 @@ for (k in 1:N) {
         as.data.frame
       ), out$ModelNames)
   }
-  
+
   for (name in out$ModelNames) {
     acc_LDA[k, name] <- out[[name]]$LDA$accuracy
     acc_QDA[k, name] <- out[[name]]$QDA$accuracy
     acc_EDDA[k, name] <- out[[name]]$LDA$accuracy
-    
+
     meanEr_LDA[k, name] <- out[[name]]$LDA$meanError
     meanEr_QDA[k, name] <- out[[name]]$QDA$meanError
     meanEr_EDDA[k, name] <- out[[name]]$EDDA$meanError
-    
+
     sigmaEr_LDA[k, name] <- out[[name]]$LDA$sigmaError
     sigmaEr_QDA[k, name] <- out[[name]]$QDA$sigmaError
     sigmaEr_EDDA[k, name] <- out[[name]]$EDDA$sigmaError
-    
+
     w[[name]][k, ] <- weights[[name]]
-    
+
   }
   
 }

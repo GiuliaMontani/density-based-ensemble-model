@@ -90,6 +90,7 @@ simulation <- function(S = 50,
     
     for(n in 1:N_class){
       Y_noise[Y_noise==n] <- paste0("G",n)
+      #Y_noise[Y_noise==n] <- n
     }
     
     # Train test set
@@ -104,7 +105,20 @@ simulation <- function(S = 50,
     truth.train <- train_data$label
     Y.test <- test_data$label
     Y.train <- train_data[,c((p+1):(Nannotators+p))]
-    
+    # setwd("C:/Users/giuli/Documents/GitHub/density-based-ensemble-model")
+    # path = getwd()
+    # path = paste0(path,"/",sim)
+    # path_X_train = paste0(path,"X_train.csv")
+    # path_X_test = paste0(path,"X_test.csv")
+    # path_Y_train = paste0(path,"Y_train.csv")
+    # path_y_test = paste0(path,"gt_test.csv")
+    # path_y_train = paste0(path,"gt_train.csv")
+    # 
+    # write.table(X.train, path_X_train, sep =",", row.names = FALSE, col.names = FALSE)
+    # write.table(X.test, path_X_test, sep =",", row.names = FALSE, col.names = FALSE)
+    # write.table(Y.train, path_Y_train, sep =",", row.names = FALSE, col.names = FALSE)
+    # write.table(as.data.frame(Y.test), path_y_test, sep =",", row.names = FALSE, col.names = FALSE)
+    # write.table(as.data.frame(truth.train), path_y_train, sep =",", row.names = FALSE, col.names = FALSE)
     
     # Weights generation
     weights <- weights_generation(xtrain = X.train, ytrain_noise = Y.train, ytrain = truth.train,ytest = Y.test, 
