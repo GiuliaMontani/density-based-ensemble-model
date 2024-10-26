@@ -1,0 +1,12 @@
+p: 2
+mu:
+  - [2, 2]
+  - [-2, -2]
+  - [0, 0]
+Nobs: [50]
+S: 50
+set_seed: 43
+Sigma1_divisor: 4
+Sigma2_divisor: 4
+Sigma3_divisor: 4
+simulation_type: 2
