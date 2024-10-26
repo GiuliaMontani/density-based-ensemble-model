@@ -23,6 +23,14 @@ Rscript utils/install_packages.R
 
 ### Requirements to run Pyhton scripts
 
+- **Python version***: 3.11
+
+Navigate to the main directory of the project and run:
+
+``` bash
+pip install numpy matplotlib
+```
+
 ### Requiremnets to run Julia scripts
 
 ## Simulation
@@ -59,3 +67,14 @@ Inside the folder results are saved figure 7, figure 8 and figure 2b (appendix f
 Inside the folder results/real_data are saved csv files with numerical results presented in the manuscript in table 6 and table 7.
 
 - Competing models
+
+## Other material
+Figure 3 is a visual example of a Dirichlet distribution on a two dimensional simplex.
+
+Open your terminal, navigate to the main directory of your project, and execute the following command:
+
+``` bash
+py utils/figure3.py
+```
+
+Inside the folder results figure 3 is saved.
