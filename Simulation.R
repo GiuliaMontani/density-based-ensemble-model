@@ -7,7 +7,7 @@ source("model/score.R")
 source("model/model_comparison.R")
 source("model/weights_generation.R")
 source("model/prediction_ensemble_model.R")
-source("utils/save_simulation_for_paper.R")
+source("utils/save_result_for_paper.R")
 
 cat("----- Load packages -----\n")
 library(mclust)
@@ -76,9 +76,11 @@ if (config$simulation_type == 1) {
   cat("Figure2a saved to:", imgPath, "\n")
   
   # Run the simulation, the "result_simulation1.rds" are saved
-  
+  cat("----- Run models -----\n")
   result <- simulation(S = 50, mu = mu, N= Nobs)
+  cat("----- End -----\n")
   
+  cat("----- Save results -----\n")
   # Save the result to an RDS file
   resultPath = file.path(path_results, "result_simulation1.rds")
   saveRDS(result, file = resultPath)
@@ -118,7 +120,7 @@ if (config$simulation_type == 1) {
 # Save png to produce figure4, figure 5 and figure 6 in the paper
 # Save all csv files to produce table 4 in the paper
 cat("----- Save results for paper -----\n")
-save_simulation_for_paper(result, config$simulation_type, path_results)
+save_result_for_paper(result, config$simulation_type, path_results)
 cat("----- End of simulation -----\n")
 cat("----- Thanks -----\n")
 

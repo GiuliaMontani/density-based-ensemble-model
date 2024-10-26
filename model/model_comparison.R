@@ -262,23 +262,6 @@ model_comparison <- function(xtrain = NULL,
           output[[model_m]][[model_mm]]$accuracy <- cm$overall[1]
           output[[model_m]][["weights"]] <- weights
           
-          # if (model_name[m] == "ExpertBeginner2" && model_mm =="LDA"){
-          #   conf_matrix_df <- cm$table
-          #   class_accuracies <- diag(conf_matrix_df) / rowSums(conf_matrix_df)
-          # 
-          #   ref <- as.factor(ytest)
-          #   ref <- recode(ref, "adenoma" = "malignant", "serrated" = "malignant")
-          #   pred_binary <- pred$classification
-          #   pred_binary <- recode(pred_binary, "adenoma" = "malignant", "serrated" = "malignant")
-          # 
-          #   sen <- sensitivity(pred_binary,ref)
-          #   prec <- posPredValue(pred_binary,ref)
-          #   spec <- specificity(pred_binary,ref)
-          #   NPV <- negPredValue(pred_binary,ref)
-          # 
-          #   extra_out <- c(class_accuracies,sen,prec,spec,NPV)
-          # }
-          
           meanerr <- 0
           sigmaerr <- 0
           
@@ -314,6 +297,5 @@ model_comparison <- function(xtrain = NULL,
   
   
   output[["ModelNames"]] <- model_name
-  #output[["Acc_single"]] <- extra_out
   return(output)
 }
