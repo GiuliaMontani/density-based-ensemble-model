@@ -53,11 +53,17 @@ The entire code is written in Matlab, which uses the library netlab
 git clone https://github.com/sods/netlab.git
 ```
 
-The classification stage is based on Gaussian processes by using the GPML software, download available at: <http://www.gaussianprocess.org/gpml/code/matlab/doc/>.
+The classification stage is based on Gaussian processes by using the GPML software, download available at: <http://www.gaussianprocess.org/gpml/code/matlab/doc/>. Save the folder as default 'gpml-matlab-master'.
 
 It is important to clone and download at the same level where there is the matlab script LKAAR_experiments.m
 
 ### Requiremnets to run Julia scripts
+
+## Results
+All the script can be executed following the instruction below. 
+The results are saved inside the folder "results". 
+All the figure in the manuscript are .png files, they start with "{figure_number}figure".
+All the numerical results reported in the manuscript tables are .csv files, they start with "{table_number}table".
 
 ## Simulation
 
@@ -75,10 +81,6 @@ Rscript Simulation.R .\config\config_simulation1.yaml
 Rscript Simulation.R .\config\config_simulation2.yaml
 ```
 
-Inside the folder results are saved figure2, figure 4 to 6.
-
-Inside the folder results/1simulation and results/2simulation are saved csv files with numerical results presented in the manuscript in table 4.
-
 -   Competing models
 
 ## Real data application
@@ -93,11 +95,13 @@ Open your terminal, navigate to the main directory of your project, and execute 
 Rscript real_data.R
 ```
 
-Inside the folder results are saved figure 7, figure 8 and figure 2b (appendix figure).
-
-Inside the folder results/real_data are saved csv files with numerical results presented in the manuscript in table 6 and table 7.
-
 -   Competing models
+
+LKAAR for real data application.
+
+``` bash
+matlab -nodisplay -nosplash -r "run('LKAAR_experiment.m'); exit;"
+```
 
 ## Other material
 
@@ -109,4 +113,3 @@ Open your terminal, navigate to the main directory of your project, and execute 
 py utils/figure3.py
 ```
 
-Inside the folder results figure 3 is saved.

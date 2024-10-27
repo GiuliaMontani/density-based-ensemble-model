@@ -2,12 +2,12 @@
 clc; clear all; close all;
 % Assuming the current working directory contains the cloned/extracted folders
 script_directory = pwd;
-cd(fullfile(script_directory, 'gpml-matlab'))
-addpath(fullfile(script_directory, 'gpml-matlab'));
+cd(fullfile(script_directory, 'gpml-matlab-master'))
+addpath(fullfile(script_directory, 'gpml-matlab-master'));
 startup;
 cd(script_directory);
 addpath(genpath(fullfile(script_directory, 'LKAAR')));
-addpath(fullfile(script_directory,'netlab-master_2'));
+addpath(fullfile(script_directory,'netlab'));
 
 base_path = 'data/50_real_data_split/';
 X_train_base = 'X_train.csv';
