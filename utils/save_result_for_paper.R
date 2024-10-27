@@ -1,18 +1,12 @@
 save_result_for_paper <- function(result,
-                                      simulation_type,
-                                      path,
-                                      real_data = FALSE){
-  
+                                  path,
+                                  simulation_type = NA,
+                                  real_data = FALSE){
   if (real_data == TRUE){
-    path_csv <- file.path(path, "real_data")
-    if (!dir.exists(path_csv)) {
-      dir.create(path_csv, recursive = TRUE)
-    }
+    path_csv <- file.path(path, "table6.csv")
+    simulation_type <- 1
   } else {
-    path_csv <- file.path(path, paste0(simulation_type, "simulation"))
-    if (!dir.exists(path_csv)) {
-      dir.create(path_csv, recursive = TRUE)
-    }
+    path_csv <- file.path(path, paste0(simulation_type, "table4.csv"))
   }
   
   models_name <- c("GT","E2","N3","PGT","EN","E","MV","ItAlg1","ItAlg2")
@@ -24,57 +18,50 @@ save_result_for_paper <- function(result,
   ACC_LDA <- ACC_LDA[,indexLDA]
   colnames(ACC_LDA) <- models_name
   acc_dataLDA <- data.frame(ACC = c(ACC_LDA), Model= rep(models_name, each = nrow(ACC_LDA)))
-  accLDA_file <- file.path(path_csv, "acc_data_LDA.csv")
-  write.csv(acc_dataLDA, file = accLDA_file, row.names = FALSE)
-  cat("Accuracy LDA data saved to:", accLDA_file, "\n")
   
   ACC_QDA <- result$Accuracy$AccuracyQDA
   ACC_QDA <- ACC_QDA[,indexQDA]
   colnames(ACC_QDA) <- models_name
   acc_dataQDA <- data.frame(ACC = c(ACC_QDA), Model = rep(models_name, each = nrow(ACC_QDA)))
-  accQDA_file <- file.path(path_csv, "acc_data_QDA.csv")
-  write.csv(acc_dataQDA, file = accQDA_file, row.names = FALSE)
-  cat("Accuracy QDA data saved to:", accQDA_file, "\n")
   
   ACC_EDDA <- result$Accuracy$AccuracyEDDA
   ACC_EDDA <- ACC_EDDA[,indexEDDA]
   colnames(ACC_EDDA) <- models_name
   acc_dataEDDA <- data.frame(ACC = c(ACC_EDDA), Model = rep(models_name, each = nrow(ACC_EDDA)))
-  accEDDA_file <- file.path(path_csv, "acc_data_EDDA.csv")
-  write.csv(acc_dataEDDA, file = accEDDA_file, row.names = FALSE)
-  cat("Accuracy EDDA data saved to:", accEDDA_file, "\n")
 
   MSE <- result$MeanError$MeanErrorLDA
   MSE <- MSE[,indexLDA]
   colnames(MSE) <- models_name
   mse_data <- data.frame(MSE = c(MSE), Model = rep(models_name, each = nrow(MSE)))
-  mse_csv_file <- file.path(path_csv, "mse_data.csv")
-  write.csv(mse_data, file = mse_csv_file, row.names = FALSE)
-  cat("MSE data saved to:", mse_csv_file, "\n")
   
   CSE_LDA <- result$SigmaError$SigmaErrorLDA
   CSE_LDA <- CSE_LDA[,indexLDA]
   colnames(CSE_LDA) <- models_name
   cse_dataLDA <- data.frame(CSE = c(CSE_LDA), Model = rep(models_name, each = nrow(MSE)))
-  cseLDA_file <- file.path(path_csv, "cse_data_LDA.csv")
-  write.csv(cse_dataLDA, file = cseLDA_file, row.names = FALSE)
-  cat("CSE LDA data saved to:", cseLDA_file, "\n")
   
   CSE_QDA <- result$SigmaError$SigmaErrorQDA
   CSE_QDA <- CSE_QDA[,indexQDA]
   colnames(CSE_QDA) <- models_name
   cse_dataQDA <- data.frame(CSE = c(CSE_QDA), Model = rep(models_name, each = nrow(MSE)))
-  cseQDA_file <- file.path(path_csv, "cse_data_QDA.csv")
-  write.csv(cse_dataQDA, file = cseQDA_file, row.names = FALSE)
-  cat("CSE QDA data saved to:", cseQDA_file, "\n")
   
   CSE_EDDA <- result$SigmaError$SigmaErrorEDDA
   CSE_EDDA <- CSE_EDDA[,indexEDDA]
   colnames(CSE_EDDA) <- models_name
   cse_dataEDDA <- data.frame(CSE = c(CSE_EDDA), Model = rep(models_name, each = nrow(MSE)))
-  cseEDDA_file <- file.path(path_csv, "cse_data_EDDA.csv")
-  write.csv(cse_dataEDDA, file = cseEDDA_file, row.names = FALSE)
-  cat("CSE EDDA data saved to:", cseEDDA_file, "\n")
+  
+  result_df  <- data.frame(ACC_LDA = colMeans(ACC_LDA),
+                       ACC_LDA_sd = apply(ACC_LDA, 2, sd),
+                       ACC_QDA = colMeans(ACC_QDA),
+                       ACC_QDA_sd = apply(ACC_QDA, 2, sd),
+                       ACC_EDDA = colMeans(ACC_EDDA),
+                       ACC_EDDA_sd = apply(ACC_EDDA, 2, sd),
+                       MSE = colMeans(MSE),
+                       CSE_LDA = colMeans(CSE_LDA),
+                       CSE_QDA = colMeans(CSE_QDA),
+                       CSE_EDDA = colMeans(CSE_EDDA))
+  
+  write.csv(result_df, file = path_csv, row.names = FALSE)
+  cat("Numeric results saved to:", path_csv, "\n") 
   
   weightsPGT1 <- result$weights$someGT
   

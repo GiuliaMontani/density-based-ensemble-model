@@ -32,11 +32,12 @@ library(yaml)
 
 cat("----- Set config -----\n")
 # Simulation
-args <- commandArgs(trailingOnly = TRUE)
-if (length(args) == 0) {
-  stop("Specify config file as argument")
-}
-config_file <- args[1]
+# args <- commandArgs(trailingOnly = TRUE)
+# if (length(args) == 0) {
+#   stop("Specify config file as argument")
+# }
+# config_file <- args[1]
+config_file <- "config/config_simulation1.yaml"
 
 # Generate and save input data in result folder.
 # This section of code produces Figure 2 in the paper:
@@ -120,7 +121,7 @@ if (config$simulation_type == 1) {
 # Save png to produce figure4, figure 5 and figure 6 in the paper
 # Save all csv files to produce table 4 in the paper
 cat("----- Save results for paper -----\n")
-save_result_for_paper(result, config$simulation_type, path_results)
+save_result_for_paper(result, path_results, config$simulation_type)
 cat("----- End of simulation -----\n")
 cat("----- Thanks -----\n")
 

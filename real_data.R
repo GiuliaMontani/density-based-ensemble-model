@@ -209,7 +209,6 @@ saveRDS(output, file = resultPath)
 
 cat("----- Save results for paper -----\n")
 save_result_for_paper(output,
-                      1,
                       path_results,
                       real_data = TRUE)
 
@@ -308,46 +307,33 @@ resultPath = file.path(path_results, "result_real_data_EN.rds")
 saveRDS(output, file = resultPath)
 
 cat("----- Save results for paper -----\n")
-path_csv <- file.path(path, "real_data")
-if (!dir.exists(path_csv)) {
-  dir.create(path_csv, recursive = TRUE)
-}
+path_csv <- file.path(path, "table7.csv")
   
 models_name <- "EN"
 
 accuracy <- output$AccuracyLDA
 colnames(accuracy) <- models_name
-acc_dataLDA <- data.frame(ACC = c(accuracy), Model= rep(models_name, each = nrow(accuracy)))
-accLDA_file <- file.path(path_csv, "acc_data_LDA_EN.csv")
-write.csv(acc_dataLDA, file = accLDA_file, row.names = FALSE)
-cat("Accuracy LDA for EN data saved to:", accLDA_file, "\n")
 
 sensitivity <- output$sensitivityLDA
 colnames(sensitivity) <- models_name
-sen_dataLDA <- data.frame(sensitivity = c(sensitivity), Model = rep(models_name, each = nrow(sensitivity)))
-senLDA_file <- file.path(path_csv, "sensitivity_EN.csv")
-write.csv(sen_dataLDA, file = senLDA_file, row.names = FALSE)
-cat("Sensitivity LDA for EN data saved to:", senLDA_file, "\n")
 
 NPV <- output$NPVLDA
 colnames(NPV) <- models_name
-NPV_dataLDA <- data.frame(NPV = c(NPV), Model = rep(models_name, each = nrow(NPV)))
-NPVLDA_file <- file.path(path_csv, "NPV_EN.csv")
-write.csv(NPV_dataLDA, file = NPVLDA_file, row.names = FALSE)
-cat("Sensitivity LDA for EN data saved to:", NPVLDA_file, "\n")
 
 specificity <- output$specificityLDA
 colnames(specificity) <- models_name
-specificity_dataLDA <- data.frame(specificity = c(specificity), Model = rep(models_name, each = nrow(specificity)))
-specificityLDA_file <- file.path(path_csv, "specificity_EN.csv")
-write.csv(specificityLDA_file, file = NPVLDA_file, row.names = FALSE)
-cat("Specificity LDA for EN data saved to:", specificityLDA_file, "\n")
 
 precision <- output$precisionLDA
 colnames(precision) <- models_name
-precision_dataLDA <- data.frame(precision = c(precision), Model = rep(models_name, each = nrow(precision)))
-precisionLDA_file <- file.path(path_csv, "precision_EN.csv")
-write.csv(precision_dataLDA, file = precisionLDA_file, row.names = FALSE)
-cat("Precision LDA for EN data saved to:", precisionLDA_file, "\n")
 
-
+result_df  <- data.frame(ACC = colMeans(accuracy),
+                         sensitivity = colMeans(sensitivity),
+                         sd_sen = apply(sensitivity, 2, sd),
+                         NPV = colMeans(NPV),
+                         sd_NPV = apply(NPV, 2, sd),
+                         specificity = colMeans(specificity),
+                         sd_spec = apply(specificity, 2, sd),
+                         precision = colMeans(precision),
+                         sd_prec = apply(precision, 2, sd))
+write.csv(result_df, file = path_csv, row.names = FALSE)
+cat("Numeric results saved to:", path_csv, "\n") 
