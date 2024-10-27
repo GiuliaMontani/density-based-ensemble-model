@@ -6,9 +6,8 @@ cd(fullfile(script_directory, 'gpml-matlab'))
 addpath(fullfile(script_directory, 'gpml-matlab'));
 startup;
 cd(script_directory);
-addpath(fullfile(script_directory,'netlab-master_2'));
 addpath(genpath(fullfile(script_directory, 'LKAAR')));
-cd(script_directory)
+addpath(fullfile(script_directory,'netlab-master_2'));
 
 base_path = 'data/50_real_data_split/';
 X_train_base = 'X_train.csv';
@@ -82,9 +81,7 @@ for i = 1:50
     muvec1 = zeros(Nte, K, R);
     for r = 1:R
        aux = (sum(disK.*repmat(beta(:,r),1,Nte))./sum(disK))'; 
-       data = [Xte(:,1), Xte(:,2), aux];
-       filename = ['Mu_Annota', num2str(r), '.dat'];
-       save(filename, 'data', '-ascii')   % save to myfile.dat 
+       data = [Xte(:,1), Xte(:,2), aux]; 
        muvec(:,:,r) = repmat(aux, 1, K);
     end
     
@@ -96,24 +93,25 @@ for i = 1:50
 end
 
 % Define the folder paths
-results_folder = 'results';
-acc_data_folder = fullfile(results_folder, 'real_data');
+results_folder = fullfile(script_directory, 'results');
 
 % Create the results folder if it doesn't exist
 if ~exist(results_folder, 'dir')
     mkdir(results_folder);
 end
 
-% Create the real_data folder if it doesn't exist
-if ~exist(acc_data_folder, 'dir')
-    mkdir(acc_data_folder);
-end
 
 % Save the prediction results
 save(fullfile(results_folder, 'pred_real_data_LKAAR.mat'), 'pred_all');
 accuracy_matrix = cell2mat(pred_all);
 
 % Save the accuracy matrix in a CSV file
-csvwrite(fullfile(acc_data_folder, 'acc_data_LKAAR.csv'), accuracy_matrix);
+mean_accuracy = mean(accuracy_matrix);
+std_accuracy = std(accuracy_matrix);
+results_table = table(mean_accuracy, std_accuracy, 'VariableNames', {'accuracy', 'StandardDeviation'});
+
+
+% Save as CSV file with headers
+writetable(results_table, 'table6_LKAAR.csv');
 
 
