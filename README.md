@@ -1,8 +1,133 @@
-# density-based-ensemble-model
+Supplementary information / reproducible research files for the manuscript Title:
 
-Supervised learning entails training a model with labeled data to predict outcomes for new, unlabeled data. It is assumed that the label in the training set corresponds to the ground truth. However, precise ground truth labels are challenging to obtain due to resource limitations, complex data, and ambiguity. This suggests that errors, commonly referred to as noise, are present in the labels used during the training phase of the model.
+"Stacking model-based classifiers for dealing with multiple sets of noisy labels"\
+\
+Authors: Giulia Montani, Andrea Cappozzo
 
-Here is proposed a density based ensemble approach to deal with multiple set of noisy labels. The ensemble model is constructed by combining various base learners, which are models trained using a single set of noisy labels. In particular, Gaussian Mixture Models (GMMs) are employed as base learners. For the purpose of combining the GMMs, different weighted averaging methodologies pursued directly on the estimated parameters of the GMMs are proposed.
+In case of questions or comments please contact: giuliamontani.gm\@gmail.com or andrea.cappozzo@unimi.it
 
+## System Information
 
+-   **Platform**: x86_64-w64-mingw32/x64 (64-bit)
+-   **Running under**: Windows 10 x64 (build 22631)
+
+### Requirements to run R scripts
+
+-   **R version**: 4.2.2 (2022-10-31 ucrt)
+
+Navigate to the main directory of the project and run:
+
+``` bash
+Rscript ./utils/install_packages.R
+```
+
+The code for the implemented density based ensemble model are all written in R.
+
+### Requirements to run Pyhton scripts
+
+-   **Python version**: 3.11
+
+Navigate to the main directory of the project and run:
+
+``` bash
+pip install numpy matplotlib
+```
+
+The pyhton scripts is used only to visualize the example of a Dirichlet distribution on a two dimensional simplex.
+
+### Requiremnets to run Matlab script
+
+-   **Matlab version**: R2022a
+
+Navigate to the main directory of the project and clone:
+
+LKAAR repository, contains competing model LKAAR (TODO: citare il paper?)
+
+``` bash
+git clone https://github.com/juliangilg/LKAAR.git
+```
+
+The entire code is written in Matlab, which uses the library netlab
+
+``` bash
+git clone https://github.com/sods/netlab.git
+```
+
+The classification stage is based on Gaussian processes by using the GPML software, download available at: <http://www.gaussianprocess.org/gpml/code/matlab/doc/>. Save the folder as default 'gpml-matlab-master'.
+
+It is important to clone and download at the same level where there is the matlab script LKAAR_experiments.m
+
+### Requirements to run Julia scripts
+
+-   **Julia version**: 0.3.12 
+
+Original implementation available in the repository [https://github.com/fmpr/LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds)
+
+## Results
+All the script can be executed following the instruction below. 
+The results are saved inside the folder "results". 
+All the figure in the manuscript are .png files, they start with "{figure_number}figure".
+All the numerical results reported in the manuscript tables are .csv files, they start with "{table_number}table".
+
+## Simulation
+
+Open your terminal, navigate to the main directory of your project, and execute the following command:
+
+-   Simulation of scenario 1
+
+``` bash
+Rscript Simulation.R .\config\config_simulation1.yaml
+```
+
+-   Simulation of scenario 2
+
+``` bash
+Rscript Simulation.R .\config\config_simulation2.yaml
+```
+
+-   Competing models
+
+## Real data application
+
+Input data are available inside the folder data.
+
+Open your terminal, navigate to the main directory of your project, and execute the following command:
+
+-   Real data experiments
+
+``` bash
+Rscript real_data.R
+```
+
+-   Competing models
+
+LKAAR method 
+
+``` bash
+matlab -nodisplay -nosplash -r "run('LKAAR_experiment.m'); exit;"
+```
+
+Dawid and Skene, Raykar and Rodrigues methods (all implemented in Julia within the [LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds) Julia package)
+
+``` bash
+/path/to/julia-0.3.12/bin/julia Julia_accuracy_application.jl
+```
+
+Replace `/path/to/julia-0.3.12/` with the full path to your Julia binary.
+
+To collect results and reproduce the last row of Table 6
+
+``` bash
+Rscript competitors_analysis.R
+```
+
+## Other material
+
+Figure 3 is a visual example of a Dirichlet distribution on a two dimensional simplex.
+
+Open your terminal, navigate to the main directory of your project, and execute the following command:
+
+``` bash
+py utils/figure3.py
+```
 
