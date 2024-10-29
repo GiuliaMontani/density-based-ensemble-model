@@ -32,12 +32,13 @@ library(yaml)
 
 cat("----- Set config -----\n")
 # Simulation
+
 # args <- commandArgs(trailingOnly = TRUE)
 # if (length(args) == 0) {
 #   stop("Specify config file as argument")
 # }
 # config_file <- args[1]
-config_file <- "config/config_simulation1.yaml"
+config_file <- "config/config_simulation2.yaml"
 
 # Generate and save input data in result folder.
 # This section of code produces Figure 2 in the paper:
@@ -62,11 +63,11 @@ if (config$simulation_type == 1) {
   cat("----- Start simulation type 1 -----\n")
   
   # Simulation Scenario 1
-  x1 <- mvrnorm(n = 500, mu = mu[1,], Sigma = diag(p))
-  x2 <- mvrnorm(n = 500, mu = mu[2,], Sigma = diag(p))
-  x3 <- mvrnorm(n = 500, mu = mu[3,], Sigma = diag(p))
+  x1 <- mvrnorm(n = 50, mu = mu[1,], Sigma = diag(p))
+  x2 <- mvrnorm(n = 50, mu = mu[2,], Sigma = diag(p))
+  x3 <- mvrnorm(n = 50, mu = mu[3,], Sigma = diag(p))
   X <- rbind(x1, x2, x3)
-  colors <- c(rep('green', 500), rep('red', 500), rep('blue', 500))
+  colors <- c(rep('green', 50), rep('red', 50), rep('blue', 50))
   
   # Plot for Scenario 1
   imgPath = file.path(path_results, "figure2a.png")
@@ -94,11 +95,11 @@ if (config$simulation_type == 1) {
   Sigma2 <- genPositiveDefMat(p)$Sigma / config$Sigma2_divisor
   Sigma3 <- genPositiveDefMat(p)$Sigma / config$Sigma3_divisor
   
-  x1 <- mvrnorm(n = 500, mu = mu[1,], Sigma = Sigma1)
-  x2 <- mvrnorm(n = 500, mu = mu[2,], Sigma = Sigma2)
-  x3 <- mvrnorm(n = 500, mu = mu[3,], Sigma = Sigma3)
+  x1 <- mvrnorm(n = 50, mu = mu[1,], Sigma = Sigma1)
+  x2 <- mvrnorm(n = 50, mu = mu[2,], Sigma = Sigma2)
+  x3 <- mvrnorm(n = 50, mu = mu[3,], Sigma = Sigma3)
   X <- rbind(x1, x2, x3)
-  colors <- c(rep('green', 500), rep('red', 500), rep('blue', 500))
+  colors <- c(rep('green', 50), rep('red', 50), rep('blue', 50))
   
   # Plot for Scenario 2
   imgPath = file.path(path_results, "figure2b.png")
