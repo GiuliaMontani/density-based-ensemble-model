@@ -35,7 +35,7 @@ pip install numpy matplotlib
 
 The pyhton scripts is used only to visualize the example of a Dirichlet distribution on a two dimensional simplex.
 
-### Requiremnets to run Matlab script
+### Requirements to run Matlab script
 
 -   **Matlab version**: R2022a
 
@@ -76,13 +76,19 @@ Open your terminal, navigate to the main directory of your project, and execute 
 -   Simulation of scenario 1
 
 ``` bash
-Rscript Simulation.R .\config\config_simulation1.yaml
+yaml_file="config/config_simulation1.yaml"
+arguments=$(yq eval -j . "$yaml_file")
+
+Rscript "Simulation.R" "$arguments"
 ```
 
 -   Simulation of scenario 2
 
 ``` bash
-Rscript Simulation.R .\config\config_simulation2.yaml
+yaml_file="config/config_simulation2.yaml"
+arguments=$(yq eval -j . "$yaml_file")
+
+Rscript "Simulation.R" "$arguments"
 ```
 
 -   Competing models
