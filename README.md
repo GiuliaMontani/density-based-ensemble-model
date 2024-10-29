@@ -113,6 +113,8 @@ Dawid and Skene, Raykar and Rodrigues methods (all implemented in Julia within t
 /path/to/julia-0.3.12/bin/julia Julia_accuracy_application.jl
 ```
 
+Replace `/path/to/julia-0.3.12/` with the full path to your Julia binary.
+
 To collect results and reproduce the last row of Table 6
 
 ``` bash
