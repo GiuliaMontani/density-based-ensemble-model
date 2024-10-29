@@ -66,12 +66,12 @@ count <- 1
 # seeds <- 43
 set.seed(43)
 
-simulation(S = 50, mu = mu, N= Nobs)
+result <- simulation(S = 50, mu = mu, N= Nobs)
     
 # Set the name of the folder for the result
 simulationType <- 1
 nameFolder <- paste0(simulationType,"Simulation",format(Sys.time(), "%d-%b%Hh%Mm"))
-#visualizationResult(result, name = nameFolder)
+visualizationResult(result, name = nameFolder)
 
 ```
 
