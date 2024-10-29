@@ -4,7 +4,7 @@ Supplementary information / reproducible research files for the manuscript Title
 \
 Authors: Giulia Montani, Andrea Cappozzo
 
-In case of questions or comments please contact: giuliamontani.gm\@gmail.com or xxx
+In case of questions or comments please contact: giuliamontani.gm\@gmail.com or andrea.cappozzo@unimi.it
 
 ## System Information
 
@@ -57,7 +57,11 @@ The classification stage is based on Gaussian processes by using the GPML softwa
 
 It is important to clone and download at the same level where there is the matlab script LKAAR_experiments.m
 
-### Requiremnets to run Julia scripts
+### Requirements to run Julia scripts
+
+-   **Julia version**: 0.3.12 
+
+Original implementation available in the repository [https://github.com/fmpr/LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds)
 
 ## Results
 All the script can be executed following the instruction below. 
@@ -97,10 +101,22 @@ Rscript real_data.R
 
 -   Competing models
 
-LKAAR for real data application.
+LKAAR method 
 
 ``` bash
 matlab -nodisplay -nosplash -r "run('LKAAR_experiment.m'); exit;"
+```
+
+Dawid and Skene, Raykar and Rodrigues methods (all implemented in Julia within the [LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds) Julia package)
+
+``` bash
+/path/to/julia-0.3.12/bin/julia Julia_accuracy_application.jl
+```
+
+To collect results and reproduce the last row of Table 6
+
+``` bash
+Rscript competitors_analysis.R
 ```
 
 ## Other material
