@@ -33,18 +33,8 @@ library(yaml)
 cat("----- Set config -----\n")
 # Simulation
 
-# args <- commandArgs(trailingOnly = TRUE)
-# if (length(args) == 0) {
-#   stop("Specify config file as argument")
-# }
-# config_file <- args[1]
-config_file <- "config/config_simulation2.yaml"
-
-# Generate and save input data in result folder.
-# This section of code produces Figure 2 in the paper:
-# figure 2a is produced by running the script with config_file = "config/config_simulation1.yaml" 
-# while figure 2b is produced by running the script with config_file = "config/config_simulation2.yaml".
-config <- yaml.load_file(config_file)
+args <- commandArgs(trailingOnly = TRUE)
+config <- jsonlite::fromJSON(args[1])
 
 cd <- getwd()
 nameFolder <- "results"
@@ -52,10 +42,10 @@ path_results = file.path(cd, nameFolder)
 if (!dir.exists(path_results)) {
   dir.create(path_results, recursive = TRUE)
 }
-
+print(config)
 set.seed(config$set_seed)
 p <- config$p
-mu <- do.call(rbind, config$mu)
+mu <- config$mu
 Nobs <- config$Nobs
 
 # Check simulation type
