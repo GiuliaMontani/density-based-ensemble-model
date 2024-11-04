@@ -9,10 +9,10 @@ save_result_for_paper <- function(result,
     path_csv <- file.path(path, paste0(simulation_type, "table4.csv"))
   }
   
-  models_name <- c("GT","E2","N3","PGT","EN","E","MV","ItAlg1","ItAlg2")
-  indexLDA <- c(1,3,8,15,11,9,13,16,17)
-  indexQDA <- c(1,3,8,15,11,9,13,18,18)
-  indexEDDA <- c(1,3,7,15,11,9,13,19,20)
+  models_name <- c("GT","E1","E2","E3","E4","N1","N2","N3","PGT","EN","E","MV","ItAlg1","ItAlg2")
+  indexLDA <- c(1,2,3,4,5,6,7,8,15,11,9,13,16,17)
+  indexQDA <- c(1,2,3,4,5,6,7,8,15,11,9,13,18,18)
+  indexEDDA <- c(1,2,3,4,5,6,7,8,15,11,9,13,19,20)
   
   ACC_LDA <- result$Accuracy$AccuracyLDA
   ACC_LDA <- ACC_LDA[,indexLDA]
@@ -63,6 +63,18 @@ save_result_for_paper <- function(result,
   write.csv(result_df, file = path_csv, row.names = FALSE)
   cat("Numeric results saved to:", path_csv, "\n") 
   
+  models_to_keep <- c("GT", "E2", "N3", "PGT", "EN", "E", "MV", "ItAlg1", "ItAlg2")
+  
+  # Filter the data frame
+  MSE <- MSE[, colnames(MSE) %in% models_to_keep]
+  mse_data <- mse_data[mse_data$Model %in% models_to_keep, ]
+  CSE_LDA <- CSE_LDA[, colnames(CSE_LDA) %in% models_to_keep]
+  cse_dataLDA <- cse_dataLDA[cse_dataLDA$Model %in% models_to_keep, ]
+  CSE_QDA <- CSE_QDA[, colnames(CSE_QDA) %in% models_to_keep]
+  cse_dataQDA <- cse_dataQDA[cse_dataQDA$Model %in% models_to_keep, ]
+  CSE_EDDA <- CSE_EDDA[, colnames(CSE_EDDA) %in% models_to_keep]
+  cse_dataEDDA <- cse_dataEDDA[cse_dataEDDA$Model %in% models_to_keep, ]
+  
   weightsPGT1 <- result$weights$someGT
   
   weightsMV1 <- result$weights$MV1
@@ -81,11 +93,13 @@ save_result_for_paper <- function(result,
   
   weightsItAlg2EDDA1 <- result$weights$IterAlg2EDDA
   
+  
   if (simulation_type == 1){
     if (real_data == FALSE){
+      
       mse_plot <- ggplot(mse_data, aes(x = Model, y = MSE, fill = Model)) +
         geom_boxplot(fill=c("lightgray","lightgray","lightgray"  ,"#999999","#999999" ,"#999999" ,"#999999","#999999" ,"#999999"  ), color="black") +
-        scale_x_discrete(limits=models_name)+
+        scale_x_discrete(limits=models_to_keep)+
         geom_hline(yintercept=median(MSE[,1]), color = "red")+
         geom_hline(yintercept=median(MSE[,5]), linetype="dashed", color = "red")
       mse_plot_file <- file.path(path, "figure4_mse.png")
@@ -95,7 +109,7 @@ save_result_for_paper <- function(result,
       cseLDA_plot <- ggplot(cse_dataLDA, aes(x = Model, y = CSE, fill = Model)) +
         geom_boxplot(fill = c("lightblue","lightblue","lightblue","deepskyblue","deepskyblue","deepskyblue","deepskyblue","deepskyblue","deepskyblue"), color = "black") +
         labs(title = "LDA") +
-        scale_x_discrete(limits=models_name)+
+        scale_x_discrete(limits=models_to_keep)+
         geom_hline(yintercept=median(CSE_LDA[,1]), color = "red")+
         geom_hline(yintercept=median(CSE_LDA[,5]), linetype="dashed", color = "red")+
         ylim(0,7)
@@ -103,7 +117,7 @@ save_result_for_paper <- function(result,
       cseQDA_plot <- ggplot(cse_dataQDA, aes(x = Model, y = CSE, fill = Model)) +
         geom_boxplot(fill = c("#CC99FF","#CC99FF","#CC99FF","purple","purple","purple","purple","purple","purple"), color = "black") +
         labs(title = "QDA") +
-        scale_x_discrete(limits=models_name)+
+        scale_x_discrete(limits=models_to_keep)+
         geom_hline(yintercept=median(CSE_QDA[,1]), color = "red")+
         geom_hline(yintercept=median(CSE_QDA[,5]), linetype="dashed", color = "red")+
         ylim(0,7)
@@ -111,7 +125,7 @@ save_result_for_paper <- function(result,
       cseEDDA_plot <- ggplot(cse_dataEDDA, aes(x = Model, y = CSE, fill = Model)) +
         geom_boxplot(fill = c("#FFF592","#FFF592","#FFF592","#FFEB3B","#FFEB3B","#FFEB3B","#FFEB3B","#FFEB3B","#FFEB3B"), color = "black") +
         labs(title = "EDDA") +
-        scale_x_discrete(limits=models_name)+
+        scale_x_discrete(limits=models_to_keep)+
         geom_hline(yintercept=median(CSE_EDDA[,1]), color = "red")+
         geom_hline(yintercept=median(CSE_EDDA[,5]), linetype="dashed", color = "red")+
         ylim(0,7)
@@ -121,7 +135,7 @@ save_result_for_paper <- function(result,
         ncol = 3, nrow = 1
       )
       CSE_file <- file.path(path, "figure5_CSE.png")
-      ggsave(filename = CSE_file, plot = grid_plot, width = 10, height = 10, dpi = 300)
+      ggsave(filename = CSE_file, plot = grid_plot, width = 30, height = 10, dpi = 300)
       cat("Figure5 CSE saved to:", CSE_file, "\n")
     }
     

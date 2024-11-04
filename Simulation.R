@@ -34,7 +34,6 @@ cat("----- Set config -----\n")
 # Simulation
 
 args <- commandArgs(trailingOnly = TRUE)
-config <- jsonlite::fromJSON(args[1])
 
 cd <- getwd()
 nameFolder <- "results"
@@ -42,20 +41,17 @@ path_results = file.path(cd, nameFolder)
 if (!dir.exists(path_results)) {
   dir.create(path_results, recursive = TRUE)
 }
-print(config)
-set.seed(config$set_seed)
-p <- config$p
-mu <- config$mu
-Nobs <- config$Nobs
 
 # Check simulation type
-if (config$simulation_type == 1) {
+if (args[1] == 1) {
   cat("----- Start simulation type 1 -----\n")
+  simulation_type <- 1
+  real_data = FALSE
   
   # Simulation Scenario 1
-  x1 <- mvrnorm(n = 50, mu = mu[1,], Sigma = diag(p))
-  x2 <- mvrnorm(n = 50, mu = mu[2,], Sigma = diag(p))
-  x3 <- mvrnorm(n = 50, mu = mu[3,], Sigma = diag(p))
+  x1 <- rmvnorm(n=50, mean=c(2,2))
+  x2 <- rmvnorm(n=50, mean=c(-2,-2))
+  x3 <- rmvnorm(n=50, mean=c(0,0))
   X <- rbind(x1, x2, x3)
   colors <- c(rep('green', 50), rep('red', 50), rep('blue', 50))
   
@@ -66,6 +62,12 @@ if (config$simulation_type == 1) {
   legend("topright", legend = c("Group 1", "Group 2", "Group 3"), fill = c("green", "red", "blue"))
   dev.off()
   cat("Figure2a saved to:", imgPath, "\n")
+  
+  p = 2
+  mu <- rbind(rep(2,p),rep(-2,p),rep(0,p))
+  Nobs = c(50)
+  
+  set.seed(43)
   
   # Run the simulation, the "result_simulation1.rds" are saved
   cat("----- Run models -----\n")
@@ -78,16 +80,19 @@ if (config$simulation_type == 1) {
   saveRDS(result, file = resultPath)
   cat("----- End simulation type 1 -----\n")
   
-} else if (config$simulation_type == 2) {
+} else if (args[1] == 2) {
   cat("----- Start simulation type 2 -----\n")
-  # Simulation Scenario 2
-  Sigma1 <- genPositiveDefMat(p)$Sigma / config$Sigma1_divisor
-  Sigma2 <- genPositiveDefMat(p)$Sigma / config$Sigma2_divisor
-  Sigma3 <- genPositiveDefMat(p)$Sigma / config$Sigma3_divisor
+  simulation_type <- 2
+  real_data = TRUE
   
-  x1 <- mvrnorm(n = 50, mu = mu[1,], Sigma = Sigma1)
-  x2 <- mvrnorm(n = 50, mu = mu[2,], Sigma = Sigma2)
-  x3 <- mvrnorm(n = 50, mu = mu[3,], Sigma = Sigma3)
+  set.seed(11)
+  # Simulation Scenario 2
+  Sigma1 <- genPositiveDefMat(2)
+  Sigma2 <- genPositiveDefMat(2)
+  Sigma3 <- genPositiveDefMat(2) #798 386
+  x1 <- rmvnorm(n=50, mean=c(2,2),sigma=Sigma1$Sigma/4)
+  x2 <- rmvnorm(n=50, mean=c(-2,-2),sigma=Sigma2$Sigma/4)
+  x3 <- rmvnorm(n=50, mean=c(0,0),sigma=Sigma3$Sigma/4)
   X <- rbind(x1, x2, x3)
   colors <- c(rep('green', 50), rep('red', 50), rep('blue', 50))
   
@@ -99,20 +104,28 @@ if (config$simulation_type == 1) {
   dev.off()
   cat("Figure2b saved to:", imgPath, "\n")
   
-  # Run the simulation, the "result_simulation2.rds" are saved
-  result <- simulation(S = 50, mu = mu, sigma = rbind(Sigma1, Sigma2, Sigma3), N= Nobs)
+  p = 2
+  mu <- rbind(rep(2,p),rep(-2,p),rep(0,p))
+  Nobs = c(50)
+  set.seed(43)
   
+  # Run the simulation, the "result_simulation2.rds" are saved
+  cat("----- Run models -----\n")
+  result <- simulation(S = 50, mu = mu, sigma = rbind(Sigma1$Sigma/4,Sigma2$Sigma/4,Sigma3$Sigma/4), N= Nobs)
+  cat("----- End -----\n")
+  
+  cat("----- Save results -----\n")
   # Save the result to an RDS file
   resultPath = file.path(path_results, "result_simulation2.rds")
   saveRDS(result, file = resultPath)
-  cat("----- End simulation type 1 -----\n")
+  cat("----- End simulation type 2 -----\n")
   
 }
 
 # Save png to produce figure4, figure 5 and figure 6 in the paper
 # Save all csv files to produce table 4 in the paper
 cat("----- Save results for paper -----\n")
-save_result_for_paper(result, path_results, config$simulation_type)
+save_result_for_paper(result, path_results, simulation_type, real_data = real_data)
 cat("----- End of simulation -----\n")
 cat("----- Thanks -----\n")
 

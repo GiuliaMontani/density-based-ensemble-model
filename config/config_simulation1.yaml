@@ -1,9 +1,0 @@
-p: 2
-mu:
-  - [2, 2]
-  - [-2, -2]
-  - [0, 0]
-Nobs: [50]
-S: 50
-set_seed: 43
-simulation_type: 1

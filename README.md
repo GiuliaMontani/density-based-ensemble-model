@@ -76,19 +76,17 @@ Open your terminal, navigate to the main directory of your project, and execute 
 -   Simulation of scenario 1
 
 ``` bash
-yaml_file="config/config_simulation1.yaml"
-arguments=$(yq eval -j . "$yaml_file")
+$argument=1
 
-Rscript "Simulation.R" "$arguments"
+Rscript "Simulation.R" "$argument"
 ```
 
 -   Simulation of scenario 2
 
 ``` bash
-yaml_file="config/config_simulation2.yaml"
-arguments=$(yq eval -j . "$yaml_file")
+$argument=2
 
-Rscript "Simulation.R" "$arguments"
+Rscript "Simulation.R" "$argument"
 ```
 
 -   Competing models
@@ -110,7 +108,7 @@ Rscript real_data.R
 LKAAR method 
 
 ``` bash
-matlab -nodisplay -nosplash -r "run('LKAAR_experiment.m'); exit;"
+matlab -nodisplay -nosplash -r "run('competitors_real_data/LKAAR_experiment.m'); exit;"
 ```
 
 Dawid and Skene, Raykar and Rodrigues methods (all implemented in Julia within the [LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds) Julia package)
