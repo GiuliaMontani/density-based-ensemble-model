@@ -83,7 +83,7 @@ if (args[1] == 1) {
 } else if (args[1] == 2) {
   cat("----- Start simulation type 2 -----\n")
   simulation_type <- 2
-  # real_data = TRUE
+  real_data = FALSE
   
   set.seed(11)
   # Simulation Scenario 2

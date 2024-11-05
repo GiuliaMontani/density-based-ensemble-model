@@ -7,7 +7,8 @@ addpath(fullfile(script_directory, 'gpml-matlab-master'));
 startup;
 cd(script_directory);
 addpath(genpath(fullfile(script_directory, 'LKAAR')));
-addpath(fullfile(script_directory,'netlab'));
+addpath(fullfile(script_directory,'netlab-master'));
+cd(script_directory)
 
 base_path = fullfile(script_directory, '..', 'data', '50_real_data_split');
 X_train_base = 'X_train.csv';
