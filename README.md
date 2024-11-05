@@ -91,6 +91,21 @@ Rscript "Simulation.R" "$argument"
 
 -   Competing models
 
+Dawid and Skene, Raykar and Rodrigues methods (all implemented in Julia within the [LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds) Julia package)
+
+``` bash
+/path/to/julia-0.3.12/bin/julia Julia_accuracy_sim_1.jl
+/path/to/julia-0.3.12/bin/julia Julia_accuracy_sim_2.jl
+```
+
+Replace `/path/to/julia-0.3.12/` with the full path to your Julia binary.
+
+To collect results and reproduce Table 5
+
+``` bash
+Rscript competitors_analysis.R
+```
+
 ## Real data application
 
 Input data are available inside the folder data.
