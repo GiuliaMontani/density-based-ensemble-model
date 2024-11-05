@@ -71,7 +71,7 @@ if (args[1] == 1) {
   
   # Run the simulation, the "result_simulation1.rds" are saved
   cat("----- Run models -----\n")
-  result <- simulation(S = 50, mu = mu, N= Nobs)
+  result <- simulation(S = 50, mu = mu, N= Nobs, simulation_type=simulation_type)
   cat("----- End -----\n")
   
   cat("----- Save results -----\n")
@@ -83,7 +83,7 @@ if (args[1] == 1) {
 } else if (args[1] == 2) {
   cat("----- Start simulation type 2 -----\n")
   simulation_type <- 2
-  real_data = TRUE
+  # real_data = TRUE
   
   set.seed(11)
   # Simulation Scenario 2
@@ -111,7 +111,13 @@ if (args[1] == 1) {
   
   # Run the simulation, the "result_simulation2.rds" are saved
   cat("----- Run models -----\n")
-  result <- simulation(S = 50, mu = mu, sigma = rbind(Sigma1$Sigma/4,Sigma2$Sigma/4,Sigma3$Sigma/4), N= Nobs)
+  result <- simulation(
+    S = 50,
+    mu = mu,
+    sigma = rbind(Sigma1$Sigma / 4, Sigma2$Sigma / 4, Sigma3$Sigma / 4),
+    N = Nobs,
+    simulation_type = simulation_type
+  )
   cat("----- End -----\n")
   
   cat("----- Save results -----\n")

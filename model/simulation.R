@@ -10,7 +10,8 @@ simulation <- function(S = 50,
                        N_exp = 4,
                        N_beg = 3,
                        N_class = 3,
-                       weights = NULL){
+                       weights = NULL,
+                       simulation_type){
   Y <- c(rep("G1",N),rep("G2",N),rep("G3",N))
   
   if(!is.null(Nannotators) && Nannotators != N_exp+N_beg){
@@ -105,8 +106,16 @@ simulation <- function(S = 50,
     Y.test <- test_data$label
     Y.train <- train_data[,c((p+1):(Nannotators+p))]
     
+    # Save sims for Julia competitors
+    save_sims_file_path <- paste0("data/50_sim_",simulation_type,"_data_split/")
     
-    # Weights generation
+    write.table(x = X.train,file = paste0(save_sims_file_path,sim,"X_train.csv"),row.names = FALSE,col.names = FALSE,sep=",")
+    write.table(x = X.test,file = paste0(save_sims_file_path,sim,"X_test.csv"),row.names = FALSE,col.names = FALSE,sep=",")
+    write.table(x = apply(Y.train,2,function(ann) as.integer(gsub("G", "", ann))),file = paste0(save_sims_file_path,sim,"Y_train.csv"),row.names = FALSE,col.names = FALSE,sep=",")
+    write.table(x = as.integer(gsub("G", "", Y.test)),file = paste0(save_sims_file_path,sim,"gt_test.csv"),row.names = FALSE,col.names = FALSE,sep=",")
+    write.table(x = as.integer(gsub("G", "", truth.train)),file = paste0(save_sims_file_path,sim,"gt_train.csv"),row.names = FALSE,col.names = FALSE,sep=",")
+    
+     # Weights generation
     weights <- weights_generation(xtrain = X.train, ytrain_noise = Y.train, ytrain = truth.train,ytest = Y.test, 
                                     Nannotators = Nannotators, N_exp = N_exp, N_beg = N_beg)  
 
