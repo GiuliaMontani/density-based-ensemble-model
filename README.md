@@ -37,25 +37,9 @@ The pyhton scripts is used only to visualize the example of a Dirichlet distribu
 
 ### Requirements to run Matlab script
 
--   **Matlab version**: R2022a
+-   **Matlab version**: R2024a
 
-Navigate to the main directory of the project and clone:
-
-LKAAR repository, contains competing model LKAAR (TODO: citare il paper?)
-
-``` bash
-git clone https://github.com/juliangilg/LKAAR.git
-```
-
-The entire code is written in Matlab, which uses the library netlab
-
-``` bash
-git clone https://github.com/sods/netlab.git
-```
-
-The classification stage is based on Gaussian processes by using the GPML software, download available at: <http://www.gaussianprocess.org/gpml/code/matlab/doc/>. Save the folder as default 'gpml-matlab-master'.
-
-It is important to clone and download at the same level where there is the matlab script LKAAR_experiments.m
+Original implementation available in the repository [https://github.com/juliangilg/LKAAR](https://github.com/juliangilg/LKAAR)
 
 ### Requirements to run Julia scripts
 
@@ -120,7 +104,7 @@ Rscript real_data.R
 
 -   Competing models
 
-LKAAR method 
+LKAAR method (implemented in Matlab within the [https://github.com/juliangilg/LKAAR](https://github.com/juliangilg/LKAAR) repository)
 
 ``` bash
 matlab -nodisplay -nosplash -r "run('competitors_real_data/LKAAR_experiment.m'); exit;"
