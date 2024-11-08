@@ -131,6 +131,6 @@ Figure 3 is a visual example of a Dirichlet distribution on a two dimensional si
 Open your terminal, navigate to the main directory of your project, and execute the following command:
 
 ``` bash
-py utils/figure3.py
+python utils/figure3.py
 ```
 
