@@ -33,7 +33,7 @@ Navigate to the main directory of the project and run:
 pip install numpy matplotlib
 ```
 
-The pyhton scripts is used only to visualize the example of a Dirichlet distribution on a two dimensional simplex.
+The pyhton scripts are used only to visualize the example of a Dirichlet distribution on a two dimensional simplex.
 
 ### Requirements to run Matlab script
 
