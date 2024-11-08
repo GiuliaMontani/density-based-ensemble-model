@@ -1,4 +1,4 @@
-Supplementary information / reproducible research files for the manuscript Title:
+Supplementary information / reproducible research files for the manuscript:
 
 "Stacking model-based classifiers for dealing with multiple sets of noisy labels"\
 \
