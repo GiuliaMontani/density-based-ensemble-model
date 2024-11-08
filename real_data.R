@@ -307,7 +307,7 @@ resultPath = file.path(path_results, "result_real_data_EN.rds")
 saveRDS(output, file = resultPath)
 
 cat("----- Save results for paper -----\n")
-path_csv <- file.path(path, "table7.csv")
+path_csv <- file.path(path_results, "table7.csv")
   
 models_name <- "EN"
 

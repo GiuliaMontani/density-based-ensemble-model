@@ -1,4 +1,4 @@
-Supplementary information / reproducible research files for the manuscript Title:
+Supplementary information / reproducible research files for the manuscript:
 
 "Stacking model-based classifiers for dealing with multiple sets of noisy labels"\
 \
@@ -33,29 +33,13 @@ Navigate to the main directory of the project and run:
 pip install numpy matplotlib
 ```
 
-The pyhton scripts is used only to visualize the example of a Dirichlet distribution on a two dimensional simplex.
+The pyhton scripts are used only to visualize the example of a Dirichlet distribution on a two dimensional simplex.
 
-### Requiremnets to run Matlab script
+### Requirements to run Matlab script
 
--   **Matlab version**: R2022a
+-   **Matlab version**: R2024a
 
-Navigate to the main directory of the project and clone:
-
-LKAAR repository, contains competing model LKAAR (TODO: citare il paper?)
-
-``` bash
-git clone https://github.com/juliangilg/LKAAR.git
-```
-
-The entire code is written in Matlab, which uses the library netlab
-
-``` bash
-git clone https://github.com/sods/netlab.git
-```
-
-The classification stage is based on Gaussian processes by using the GPML software, download available at: <http://www.gaussianprocess.org/gpml/code/matlab/doc/>. Save the folder as default 'gpml-matlab-master'.
-
-It is important to clone and download at the same level where there is the matlab script LKAAR_experiments.m
+Original implementation available in the repository [https://github.com/juliangilg/LKAAR](https://github.com/juliangilg/LKAAR)
 
 ### Requirements to run Julia scripts
 
@@ -76,22 +60,35 @@ Open your terminal, navigate to the main directory of your project, and execute 
 -   Simulation of scenario 1
 
 ``` bash
-yaml_file="config/config_simulation1.yaml"
-arguments=$(yq eval -j . "$yaml_file")
+$argument=1
 
-Rscript "Simulation.R" "$arguments"
+Rscript "Simulation.R" "$argument"
 ```
 
 -   Simulation of scenario 2
 
 ``` bash
-yaml_file="config/config_simulation2.yaml"
-arguments=$(yq eval -j . "$yaml_file")
+$argument=2
 
-Rscript "Simulation.R" "$arguments"
+Rscript "Simulation.R" "$argument"
 ```
 
 -   Competing models
+
+Dawid and Skene, Raykar and Rodrigues methods (all implemented in Julia within the [LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds) Julia package)
+
+``` bash
+/path/to/julia-0.3.12/bin/julia Julia_accuracy_sim_1.jl
+/path/to/julia-0.3.12/bin/julia Julia_accuracy_sim_2.jl
+```
+
+Replace `/path/to/julia-0.3.12/` with the full path to your Julia binary.
+
+To collect results and reproduce Table 5
+
+``` bash
+Rscript competitors_analysis.R
+```
 
 ## Real data application
 
@@ -107,10 +104,10 @@ Rscript real_data.R
 
 -   Competing models
 
-LKAAR method 
+LKAAR method (implemented in Matlab within the [https://github.com/juliangilg/LKAAR](https://github.com/juliangilg/LKAAR) repository)
 
 ``` bash
-matlab -nodisplay -nosplash -r "run('LKAAR_experiment.m'); exit;"
+matlab -nodisplay -nosplash -r "run('competitors_real_data/LKAAR_experiment.m'); exit;"
 ```
 
 Dawid and Skene, Raykar and Rodrigues methods (all implemented in Julia within the [LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds) Julia package)
