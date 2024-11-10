@@ -112,7 +112,8 @@ save_result_for_paper <- function(result,
         scale_x_discrete(limits=models_to_keep)+
         geom_hline(yintercept=median(CSE_LDA[,1]), color = "red")+
         geom_hline(yintercept=median(CSE_LDA[,5]), linetype="dashed", color = "red")+
-        ylim(0,7)
+        ylim(0,7)+
+        ylab(expression("||" * Delta * Sigma * "||" [F]))
       
       cseQDA_plot <- ggplot(cse_dataQDA, aes(x = Model, y = CSE, fill = Model)) +
         geom_boxplot(fill = c("#CC99FF","#CC99FF","#CC99FF","purple","purple","purple","purple","purple","purple"), color = "black") +
@@ -120,7 +121,8 @@ save_result_for_paper <- function(result,
         scale_x_discrete(limits=models_to_keep)+
         geom_hline(yintercept=median(CSE_QDA[,1]), color = "red")+
         geom_hline(yintercept=median(CSE_QDA[,5]), linetype="dashed", color = "red")+
-        ylim(0,7)
+        ylim(0,7)+
+        ylab(expression("||" * Delta * Sigma * "||" [F]))
       
       cseEDDA_plot <- ggplot(cse_dataEDDA, aes(x = Model, y = CSE, fill = Model)) +
         geom_boxplot(fill = c("#FFF592","#FFF592","#FFF592","#FFEB3B","#FFEB3B","#FFEB3B","#FFEB3B","#FFEB3B","#FFEB3B"), color = "black") +
@@ -128,7 +130,8 @@ save_result_for_paper <- function(result,
         scale_x_discrete(limits=models_to_keep)+
         geom_hline(yintercept=median(CSE_EDDA[,1]), color = "red")+
         geom_hline(yintercept=median(CSE_EDDA[,5]), linetype="dashed", color = "red")+
-        ylim(0,7)
+        ylim(0,7)+
+        ylab(expression("||" * Delta * Sigma * "||" [F]))
       
       grid_plot <- grid.arrange(
         cseLDA_plot, cseQDA_plot, cseEDDA_plot,
