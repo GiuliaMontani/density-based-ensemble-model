@@ -49,16 +49,16 @@ save_result_for_paper <- function(result,
   colnames(CSE_EDDA) <- models_name
   cse_dataEDDA <- data.frame(CSE = c(CSE_EDDA), Model = rep(models_name, each = nrow(MSE)))
   
-  result_df  <- data.frame(ACC_LDA = colMeans(ACC_LDA),
-                       ACC_LDA_sd = apply(ACC_LDA, 2, sd),
-                       ACC_QDA = colMeans(ACC_QDA),
-                       ACC_QDA_sd = apply(ACC_QDA, 2, sd),
-                       ACC_EDDA = colMeans(ACC_EDDA),
-                       ACC_EDDA_sd = apply(ACC_EDDA, 2, sd),
-                       MSE = colMeans(MSE),
-                       CSE_LDA = colMeans(CSE_LDA),
-                       CSE_QDA = colMeans(CSE_QDA),
-                       CSE_EDDA = colMeans(CSE_EDDA))
+  result_df  <- data.frame(ACC_LDA = colMeans(ACC_LDA, na.rm = TRUE),
+                       ACC_LDA_sd = apply(ACC_LDA, 2, sd ,na.rm = TRUE),
+                       ACC_QDA = colMeans(ACC_QDA, na.rm = TRUE),
+                       ACC_QDA_sd = apply(ACC_QDA, 2, sd, na.rm = TRUE),
+                       ACC_EDDA = colMeans(ACC_EDDA, na.rm = TRUE),
+                       ACC_EDDA_sd = apply(ACC_EDDA, 2, sd, na.rm = TRUE),
+                       MSE = colMeans(MSE, na.rm = TRUE),
+                       CSE_LDA = colMeans(CSE_LDA, na.rm = TRUE),
+                       CSE_QDA = colMeans(CSE_QDA, na.rm = TRUE),
+                       CSE_EDDA = colMeans(CSE_EDDA, na.rm = TRUE))
   
   write.csv(result_df, file = path_csv, row.names = FALSE)
   cat("Numeric results saved to:", path_csv, "\n") 
