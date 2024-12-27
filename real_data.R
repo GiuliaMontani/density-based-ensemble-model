@@ -73,9 +73,9 @@ pair_plot <- ggpairs(data = pair_data, columns = 1:5, aes(color = truth, alpha =
                      upper = list(continuous = wrap('cor', size = 2)))+
   scale_fill_manual(values=c('red','green','blue')) +
   scale_colour_manual(values=c('red','green','blue'))
-pair_plot_file <- file.path(path_results, "figure2b_appendix.png")
+pair_plot_file <- file.path(path_results, "figureA1_appendix.png")
 ggsave(filename = pair_plot_file, plot = pair_plot, width = 10, height = 8, dpi = 300)
-cat("Figure2B pair plot of data saved to:", pair_plot_file, "\n")
+cat("FigureA1 pair plot of data saved to:", pair_plot_file, "\n")
 
 cat("----- Evaluate noise in the labels -----\n")
 

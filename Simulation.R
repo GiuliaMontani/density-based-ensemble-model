@@ -48,6 +48,8 @@ if (args[1] == 1) {
   simulation_type <- 1
   real_data = FALSE
   
+  set.seed(22)
+  
   # Simulation Scenario 1
   x1 <- rmvnorm(n=50, mean=c(2,2))
   x2 <- rmvnorm(n=50, mean=c(-2,-2))
