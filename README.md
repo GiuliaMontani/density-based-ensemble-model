@@ -45,6 +45,13 @@ Original implementation available in the repository [https://github.com/juliangi
 
 -   **Julia version**: 0.3.12 
 
+Navigate to the main directory of the project and run:
+
+``` bash
+/path/to/julia-0.3.12/bin/julia utils/install_julia_packages.jl 
+```
+Replace `/path/to/julia-0.3.12/` with the full path to your Julia binary.
+
 Original implementation available in the repository [https://github.com/fmpr/LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds)
 
 ## Results
