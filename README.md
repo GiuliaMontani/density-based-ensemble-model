@@ -4,7 +4,7 @@ Supplementary information / reproducible research files for the manuscript:
 \
 Authors: Giulia Montani, Andrea Cappozzo
 
-In case of questions or comments please contact: giuliamontani.gm\@gmail.com or andrea.cappozzo@unimi.it
+In case of questions or comments please contact: giuliamontani.gm\@gmail.com or andrea.cappozzo@unicatt.it
 
 ## System Information
 
