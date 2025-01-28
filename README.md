@@ -41,6 +41,8 @@ The pyhton scripts are used only to visualize the example of a Dirichlet distrib
 
 Original implementation available in the repository [https://github.com/juliangilg/LKAAR](https://github.com/juliangilg/LKAAR)
 
+**Important note:** MATLAB requires a paid license to run. Additionally, the library software has been used “as-is,” without any modifications or customizations.
+
 ### Requirements to run Julia scripts
 
 -   **Julia version**: 0.3.12 
@@ -52,7 +54,9 @@ Navigate to the main directory of the project and run:
 ```
 Replace `/path/to/julia-0.3.12/` with the full path to your Julia binary.
 
-Original implementation available in the repository [https://github.com/fmpr/LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds)
+Original implementation available in the repository [https://github.com/fmpr/LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds).
+
+**Important Note:** Julia code depends on an outdated and no longer maintained version of Julia, which may cause installation challenges or failures. Additionally, it relies on external library software that has been used “as-is,” without any modifications or customizations.
 
 ## Results
 All the script can be executed following the instruction below. 
