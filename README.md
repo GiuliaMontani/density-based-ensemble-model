@@ -56,7 +56,7 @@ Replace `/path/to/julia-0.3.12/` with the full path to your Julia binary.
 
 Original implementation available in the repository [https://github.com/fmpr/LogReg-Crowds](https://github.com/fmpr/LogReg-Crowds).
 
-**Important Note:** Julia code depends on an outdated and no longer maintained version of Julia, which may cause installation challenges or failures. Additionally, it relies on external library software that has been used “as-is,” without any modifications or customizations.
+**Important Note:** Julia code depends on an outdated and no longer maintained version of Julia, which may cause installation challenges or failures. Additionally, it relies on external library software that has been used “as-is”, without any modifications or customizations.
 
 ## Results
 All the script can be executed following the instruction below. 
